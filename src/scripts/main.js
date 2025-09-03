@@ -3,31 +3,18 @@
 // write your code here
 
 const table = document.querySelector('table');
-const tbody = document.querySelector('tbody');
-const rows = table.rows;
-const tbodyRows = tbody.rows;
-const copy = [];
 
-function createTableCell(content, isHeader = false) {
-  const newCell = document.createElement(isHeader ? 'th' : 'td');
+const sections = [];
 
-  newCell.textContent = content;
+if (table.tHead) sections.push(table.tHead);
+sections.push(...table.tBodies);
+if (table.tFoot) sections.push(table.tFoot);
 
-  return newCell;
-}
-
-function insertCellBeforeLast(row, cell) {
-  row.insertBefore(cell, row.cells[row.cells.length - 1]);
-}
-
-for (const elem of tbodyRows) {
-  copy.push(elem.cells[1].textContent);
-}
-
-for (let i = 0; i < rows.length; i++) {
-  const elem = rows[i];
-  const isHeader = i === 0 || i === rows.length - 1;
-  const newCell = createTableCell(elem.cells[1].textContent, isHeader);
-
-  insertCellBeforeLast(elem, newCell);
+for (const section of sections) {
+  for (const row of section.rows) {
+    const secondCell = row.cells[1];
+    if (!secondCell) continue;
+    const newCell = secondCell.cloneNode(true);
+    row.insertBefore(newCell, row.cells[row.cells.length - 1]);
+  }
 }
